@@ -10,6 +10,11 @@ router.get("/", (req, res) => {
     .find()
     .then(data => {
       res.status(200).json(data);
+      if (data.length === 0) {
+        res
+          .status(404)
+          .json('error: "The posts information could not be retrieved."');
+      }
     })
     .catch(error => {
       res
@@ -21,7 +26,8 @@ router.get("/:id", (req, res) => {
   data
     .findById(req.params.id)
     .then(data => {
-      if (data) {
+      if (data.length !== 0) {
+        console.log(data.length);
         return res.status(200).json(data);
       } else {
         return res
@@ -36,11 +42,11 @@ router.get("/:id", (req, res) => {
     });
 });
 router.post("/", (req, res) => {
-  if (!req.body.user.title) return res.status(400).json("bro you need a title");
-  if (!req.body.user.contents)
+  if (!req.body.post.title) return res.status(400).json("bro you need a title");
+  if (!req.body.post.contents)
     return res.status(400).json("bro you need content come on");
   data
-    .insert(req.body.user)
+    .insert(req.body.post)
     .then(data => {
       return res.status(201).json(data);
     })
@@ -50,10 +56,10 @@ router.post("/", (req, res) => {
 });
 router.put("/:id", (req, res) => {
   data
-    .update(req.params.id, req.body.user)
+    .update(req.params.id, req.body.post)
     .then(data => {
       if (data) {
-        return res.status(200).json(data);
+        return res.status(200).json(`Post has been updated`);
       } else {
         return res
           .status(404)
@@ -71,7 +77,7 @@ router.delete("/:id", (req, res) => {
     .remove(req.params.id)
     .then(data => {
       if (data) {
-        return res.status(200).json(data);
+        return res.status(200).json("Has been deleted");
       } else {
         return res
           .status(404)

@@ -9,7 +9,7 @@ router.get("/:id/comments", (req, res) => {
   data
     .findPostComments(req.params.id)
     .then(data => {
-      if (data) {
+      if (data.length !== 0) {
         return res.status(200).json(data);
       } else {
         return res
@@ -44,11 +44,13 @@ router.get("/:id/comments/:cid", (req, res) => {
     });
 });
 router.post("/:id/comments", (req, res) => {
-  if (!req.body.post.text) return res.status(400).json("bro you need a text");
-  if (!req.body.post.post_id)
+  if (!req.body.comment) return res.status(400).json("bro you need a post");
+  if (!req.body.comment.text)
+    return res.status(400).json("bro you need a text");
+  if (!req.body.comment.post_id)
     return res.status(400).json("bro you need post_id come on");
   data
-    .insertComment(req.body.post)
+    .insertComment(req.body.comment)
     .then(data => {
       return res.status(201).json(data);
     })
